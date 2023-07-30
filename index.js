@@ -83,8 +83,8 @@ app.get("/users/:id", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  const { name, email, password, friend } = req.body;
-  const sql = `INSERT INTO users (name, email, password, friend) VALUES ('${name}', '${email}', '${password}', '${friend}')`;
+  const { name, email, password, friend, profile } = req.body;
+  const sql = `INSERT INTO users (name, email, password, friend) VALUES ('${name}', '${email}', '${password}', '${friend}', '${profile}')`;
   db.query(sql, (err, fields) => {
     if (err) response(500, "Error", "Internal Server Error", res);
     if (fields?.affectedRows) {
