@@ -21,7 +21,14 @@ app.get("/users", (req, res) => {
 app.get("/quotes", (req, res) => {
   const sql = "SELECT * FROM quotes";
   db.query(sql, (err, fields) => {
-    response(200, fields, "Get all users", res);
+    response(200, fields, "Get all quotes", res);
+  });
+});
+
+app.get("/journal", (req, res) => {
+  const sql = "SELECT * FROM journal";
+  db.query(sql, (err, fields) => {
+    response(200, fields, "Get all journal", res);
   });
 });
 
@@ -32,12 +39,37 @@ app.get("/artikel", (req, res) => {
   });
 });
 
+app.get("/moods", (req, res) => {
+  const sql = "SELECT * FROM moods";
+  db.query(sql, (err, fields) => {
+    response(200, fields, "Get all moods", res);
+  });
+});
+
 app.get("/artikel/:id", (req, res) => {
   const id = req.params.id;
   const sql = `SELECT * FROM artikel WHERE id = ${id}`;
   db.query(sql, (err, fields) => {
     if (err) throw err;
     response(200, fields, "Get detail artikel", res);
+  });
+});
+
+app.get("/moods/:id", (req, res) => {
+  const id = req.params.id;
+  const sql = `SELECT * FROM moods WHERE id_user = ${id}`;
+  db.query(sql, (err, fields) => {
+    if (err) throw err;
+    response(200, fields, "Get detail moods", res);
+  });
+});
+
+app.get("/journal/:id", (req, res) => {
+  const id = req.params.id;
+  const sql = `SELECT * FROM journal WHERE id_user = ${id}`;
+  db.query(sql, (err, fields) => {
+    if (err) throw err;
+    response(200, fields, "Get detail journal", res);
   });
 });
 
@@ -53,6 +85,36 @@ app.get("/users/:id", (req, res) => {
 app.post("/register", (req, res) => {
   const { name, email, password, friend } = req.body;
   const sql = `INSERT INTO users (name, email, password, friend) VALUES ('${name}', '${email}', '${password}', '${friend}')`;
+  db.query(sql, (err, fields) => {
+    if (err) response(500, "Error", "Internal Server Error", res);
+    if (fields?.affectedRows) {
+      const data = {
+        isSuccess: fields.affectedRows,
+        id: fields.insertId,
+      };
+      response(200, data, "Data added successfully", res);
+    }
+  });
+});
+
+app.post("/journal", (req, res) => {
+  const { id_user, title, content, timestamp } = req.body;
+  const sql = `INSERT INTO journal (id_user, title, content, timestamp) VALUES ('${id_user}', '${title}', '${content}', '${timestamp}')`;
+  db.query(sql, (err, fields) => {
+    if (err) response(500, "Error", "Internal Server Error", res);
+    if (fields?.affectedRows) {
+      const data = {
+        isSuccess: fields.affectedRows,
+        id: fields.insertId,
+      };
+      response(200, data, "Data added successfully", res);
+    }
+  });
+});
+
+app.post("/moods", (req, res) => {
+  const { id_user, mood, reason, timestamp } = req.body;
+  const sql = `INSERT INTO moods (id_user, mood, reason, timestamp) VALUES ('${id_user}', '${mood}', '${reason}', '${timestamp}')`;
   db.query(sql, (err, fields) => {
     if (err) response(500, "Error", "Internal Server Error", res);
     if (fields?.affectedRows) {
