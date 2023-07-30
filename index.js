@@ -128,8 +128,8 @@ app.post("/moods", (req, res) => {
 });
 
 app.put("/users", (req, res) => {
-  const { id, name, email, password, friend } = req.body;
-  const sql = `UPDATE users SET name = '${name}', email = '${email}', password = '${password}', friend = '${friend}' WHERE id = ${id}`;
+  const { id, name, email, password, friend, profile } = req.body;
+  const sql = `UPDATE users SET name = '${name}', email = '${email}', password = '${password}', friend = '${friend}', profile = '${profile}' WHERE id = ${id}`;
   db.query(sql, (err, fields) => {
     if (err) response(500, "Error", "Internal Server Error", res);
     if (fields?.affectedRows) {
