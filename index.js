@@ -87,7 +87,7 @@ app.post("/register", (req, res) => {
   const sql = `INSERT INTO users (name, email, password, friend) VALUES ('${name}', '${email}', '${password}', '${friend}', '${profile}')`;
   db.query(sql, (err, fields) => {
     if (err) response(500, "Error", "Internal Server Error", res);
-    if (fields?.affectedRows) {
+    if (fields.affectedRows) {
       const data = {
         isSuccess: fields.affectedRows,
         id: fields.insertId,
@@ -102,7 +102,7 @@ app.post("/journal", (req, res) => {
   const sql = `INSERT INTO journal (id_user, title, content, timestamp) VALUES ('${id_user}', '${title}', '${content}', '${timestamp}')`;
   db.query(sql, (err, fields) => {
     if (err) response(500, "Error", "Internal Server Error", res);
-    if (fields?.affectedRows) {
+    if (fields.affectedRows) {
       const data = {
         isSuccess: fields.affectedRows,
         id: fields.insertId,
@@ -117,7 +117,7 @@ app.post("/moods", (req, res) => {
   const sql = `INSERT INTO moods (id_user, mood, reason, timestamp) VALUES ('${id_user}', '${mood}', '${reason}', '${timestamp}')`;
   db.query(sql, (err, fields) => {
     if (err) response(500, "Error", "Internal Server Error", res);
-    if (fields?.affectedRows) {
+    if (fields.affectedRows) {
       const data = {
         isSuccess: fields.affectedRows,
         id: fields.insertId,
@@ -132,7 +132,7 @@ app.put("/users", (req, res) => {
   const sql = `UPDATE users SET name = '${name}', email = '${email}', password = '${password}', friend = '${friend}', profile = '${profile}' WHERE id = ${id}`;
   db.query(sql, (err, fields) => {
     if (err) response(500, "Error", "Internal Server Error", res);
-    if (fields?.affectedRows) {
+    if (fields.affectedRows) {
       const data = {
         isSuccess: fields.affectedRows,
         message: fields.message,
@@ -149,7 +149,7 @@ app.delete("/users", (req, res) => {
   const sql = `DELETE FROM users WHERE id = ${id}`;
   db.query(sql, (err, fields) => {
     if (err) response(500, "Error", "Internal Server Error", res);
-    if (fields?.affectedRows) {
+    if (fields.affectedRows) {
       const data = {
         isDeleted: fields.affectedRows,
       };
