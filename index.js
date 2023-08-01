@@ -51,7 +51,9 @@ app.get("/artikel/:id", (req, res) => {
   const id = req.params.id;
   const sql = `SELECT * FROM artikel WHERE id = ${id}`;
   db.query(sql, (err, fields) => {
-    if (err) throw err;
+    if (err) {
+      response(500, "Error", "Internal Server Error", res);
+    }
     response(200, fields, "Get detail artikel", res);
   });
 });
@@ -60,7 +62,9 @@ app.get("/moods/:id", (req, res) => {
   const id = req.params.id;
   const sql = `SELECT * FROM moods WHERE id_user = ${id}`;
   db.query(sql, (err, fields) => {
-    if (err) throw err;
+    if (err) {
+      response(500, "Error", "Internal Server Error", res);
+    }
     fields.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
     response(200, fields, "Get detail moods", res);
   });
@@ -70,7 +74,9 @@ app.get("/journal/:id", (req, res) => {
   const id = req.params.id;
   const sql = `SELECT * FROM journal WHERE id_user = ${id}`;
   db.query(sql, (err, fields) => {
-    if (err) throw err;
+    if (err) {
+      response(500, "Error", "Internal Server Error", res);
+    }
     fields.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
     response(200, fields, "Get detail journal", res);
   });
@@ -80,7 +86,9 @@ app.get("/users/:id", (req, res) => {
   const id = req.params.id;
   const sql = `SELECT * FROM users WHERE id = ${id}`;
   db.query(sql, (err, fields) => {
-    if (err) throw err;
+    if (err) {
+      response(500, "Error", "Internal Server Error", res);
+    }
     response(200, fields, "Get detail users", res);
   });
 });
@@ -122,7 +130,9 @@ app.post("/journal", (req, res) => {
   const { id_user, title, content, timestamp } = req.body;
   const sql = `INSERT INTO journal (id_user, title, content, timestamp) VALUES ('${id_user}', '${title}', '${content}', '${timestamp}')`;
   db.query(sql, (err, fields) => {
-    if (err) response(500, "Error", "Internal Server Error", res);
+    if (err) {
+      response(500, "Error", "Internal Server Error", res);
+    }
     if (fields.affectedRows) {
       const data = {
         isSuccess: fields.affectedRows,
@@ -137,7 +147,9 @@ app.post("/moods", (req, res) => {
   const { id_user, mood, reason, timestamp } = req.body;
   const sql = `INSERT INTO moods (id_user, mood, reason, timestamp) VALUES ('${id_user}', '${mood}', '${reason}', '${timestamp}')`;
   db.query(sql, (err, fields) => {
-    if (err) response(500, "Error", "Internal Server Error", res);
+    if (err) {
+      response(500, "Error", "Internal Server Error", res);
+    }
     if (fields.affectedRows) {
       const data = {
         isSuccess: fields.affectedRows,
@@ -152,7 +164,9 @@ app.put("/users", (req, res) => {
   const { id, name, email, password, friend, profile } = req.body;
   const sql = `UPDATE users SET name = '${name}', email = '${email}', password = '${password}', friend = '${friend}', profile = '${profile}' WHERE id = ${id}`;
   db.query(sql, (err, fields) => {
-    if (err) response(500, "Error", "Internal Server Error", res);
+    if (err) {
+      response(500, "Error", "Internal Server Error", res);
+    }
     if (fields.affectedRows) {
       const data = {
         isSuccess: fields.affectedRows,
@@ -169,7 +183,9 @@ app.delete("/users", (req, res) => {
   const { id } = req.body;
   const sql = `DELETE FROM users WHERE id = ${id}`;
   db.query(sql, (err, fields) => {
-    if (err) response(500, "Error", "Internal Server Error", res);
+    if (err) {
+      response(500, "Error", "Internal Server Error", res);
+    }
     if (fields.affectedRows) {
       const data = {
         isDeleted: fields.affectedRows,

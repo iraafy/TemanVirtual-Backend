@@ -1,5 +1,5 @@
 const response = (statusCode, data, message, res) => {
-  res.json(statusCode, [
+  res.status(statusCode).json([
     {
       payload: data,
       message,
@@ -7,9 +7,9 @@ const response = (statusCode, data, message, res) => {
         prev: "",
         next: "",
         current: "",
-      }
+      },
     },
-  ])
-}
+  ]);
+};
 
-module.exports = response
+module.exports = response;
