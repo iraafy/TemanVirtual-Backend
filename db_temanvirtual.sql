@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 30, 2023 at 05:18 PM
+-- Generation Time: Aug 01, 2023 at 08:37 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.1.12
 
@@ -57,16 +57,6 @@ CREATE TABLE `journal` (
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `journal`
---
-
-INSERT INTO `journal` (`id`, `id_user`, `title`, `content`, `timestamp`) VALUES
-(1, 1, 'Senangnya', 'Akhirnya aku bisa bertemu dengan teman lamaku.', '2023-07-30 07:50:38'),
-(2, 1, 'Asik..', 'Aku bertemu dengan keluarga jauhku malam nanti.', '2023-07-30 07:53:48'),
-(3, 2, 'Horee', 'Nilaiku saat ini memuaskan', '2023-07-30 15:02:10'),
-(4, 1, 'WOHOOO', 'Aku bertemu dengan crush ku..', '2023-07-30 08:08:52');
-
 -- --------------------------------------------------------
 
 --
@@ -78,16 +68,8 @@ CREATE TABLE `moods` (
   `id_user` int(11) NOT NULL,
   `mood` enum('bahagia','senang','netral','murung','sedih') NOT NULL,
   `reason` text NOT NULL,
-  `timestamp` date NOT NULL
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `moods`
---
-
-INSERT INTO `moods` (`id`, `id_user`, `mood`, `reason`, `timestamp`) VALUES
-(1, 1, 'bahagia', 'pokonya aku senanggg', '2023-07-30'),
-(2, 1, 'sedih', 'huaa aku sedih sekarang', '2023-07-30');
 
 -- --------------------------------------------------------
 
@@ -151,14 +133,6 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `friend`, `profile`) VALUES
-(1, 'Ira Fitri Yani', 'ira@mail.com', '123', 'cactus', 'ava-1'),
-(2, 'Tester', 'test@mail.com', '123', 'piggy', 'ava-4');
-
---
 -- Indexes for dumped tables
 --
 
@@ -208,13 +182,13 @@ ALTER TABLE `artikel`
 -- AUTO_INCREMENT for table `journal`
 --
 ALTER TABLE `journal`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `moods`
 --
 ALTER TABLE `moods`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `quotes`
@@ -226,7 +200,7 @@ ALTER TABLE `quotes`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
