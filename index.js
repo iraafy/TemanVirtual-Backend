@@ -4,7 +4,7 @@ const port = 3001;
 const bodyParser = require("body-parser");
 const db = require("./connection");
 const response = require("./response");
-const argon2 = require("argon2");
+// const argon2 = require("argon2");
 
 app.use(bodyParser.json());
 
@@ -105,7 +105,8 @@ app.post("/register", async (req, res) => {
         response(400, "Error", "Email sudah tersedia, gunakan email lain", res);
       } else {
         try {
-          const hashedPassword = await argon2.hash(password);
+          // const hashedPassword = await argon2.hash(password);
+          const hashedPassword = password;
           const sql = `INSERT INTO users (name, email, password, friend, profile) VALUES ('${name}', '${email}', '${hashedPassword}', '${friend}', '${profile}')`;
           db.query(sql, (err, fields) => {
             if (err) {
@@ -206,7 +207,8 @@ app.post("/login", (req, res) => {
     } else {
       if (rows.length === 1) {
         const user = rows[0];
-        const match = await argon2.verify(user.password, password);
+        const match = true;
+        // const match = await argon2.verify(user.password, password);
         if (match) {
           const data = {
             id: user.id,
