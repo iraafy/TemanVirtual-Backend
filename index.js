@@ -6,14 +6,11 @@ const db = require("./connection");
 const response = require("./response");
 require("dotenv").config();
 const { createClient } = require("@supabase/supabase-js");
-// const bcrypt = require("bcrypt");
-// const saltRounds = 10;
-
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-// const argon2 = require("argon2");
 
 app.use(bodyParser.json());
 
@@ -66,10 +63,10 @@ app.post("/register", async (req, res) => {
       return response(200, userData, "Email sudah terdaftar", res);
     } else {
       try {
-        // const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
         const { data: newUser, error: newUserError } = await supabase
           .from("users")
-          .insert({ name, email, password, friend, profile })
+          .insert({ name, email, password: hashedPassword, friend, profile })
           .select("*")
           .eq("email", email);
 
@@ -106,8 +103,7 @@ app.post("/login", async (req, res) => {
 
     if (data.length === 1) {
       const user = data[0];
-      // const isPasswordValid = await bcrypt.compare(password, user.password);
-      const isPasswordValid = password === user.password;
+      const isPasswordValid = await bcrypt.compare(password, user.password);
       if (isPasswordValid) {
         const userData = {
           isSuccess: "success",
@@ -287,24 +283,46 @@ app.post("/journal", async (req, res) => {
 app.put("/users", async (req, res) => {
   const { id, name, email, password, friend, profile } = req.body;
   try {
-    const { data, error } = await supabase
+    const { data: checkEmail, error: checkEmailError } = await supabase
       .from("users")
-      .update({ name, email, password, friend, profile })
-      .eq("id", id)
-      .select();
-    if (error) {
+      .select("*")
+      .eq("email", email);
+
+    if (checkEmailError) {
+      console.error("Supabase Check Email Error:", checkEmailError);
       return response(500, null, "Internal Server Error", res);
     }
 
-    if (data.length === 1) {
+    if (checkEmail && checkEmail.length > 0) {
       const userData = {
-        isSuccess: "success",
-        message: "Data berhasil diupdate",
+        isSuccess: "error",
+        message: "Email sudah terdaftar",
       };
-      return response(200, userData, "Update user successfully", res);
+      return response(200, userData, "Email sudah terdaftar", res);
+    } else {
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .update({ name, email, password, friend, profile })
+          .eq("id", id)
+          .select();
+        if (error) {
+          return response(500, null, "Internal Server Error", res);
+        }
+
+        if (data.length === 1) {
+          const userData = {
+            isSuccess: "success",
+            message: "Data berhasil diupdate",
+          };
+          return response(200, userData, "Update user successfully", res);
+        }
+      } catch (error) {
+        return response(500, null, "Internal Server Error", res);
+      }
     }
   } catch (error) {
-    console.error(error);
+    console.error("Supabase Check Email Error:", error);
     return response(500, null, "Internal Server Error", res);
   }
 });
