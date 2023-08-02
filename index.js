@@ -6,8 +6,8 @@ const db = require("./connection");
 const response = require("./response");
 require("dotenv").config();
 const { createClient } = require("@supabase/supabase-js");
-// const bcrypt = require("bcrypt");
-// const saltRounds = 10;
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
@@ -64,10 +64,10 @@ app.post("/register", async (req, res) => {
       return response(200, userData, "Email sudah terdaftar", res);
     } else {
       try {
-        // const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
         const { data: newUser, error: newUserError } = await supabase
           .from("users")
-          .insert({ name, email, password, friend, profile })
+          .insert({ name, email, password: hashedPassword, friend, profile })
           .select("*")
           .eq("email", email);
 
@@ -104,8 +104,8 @@ app.post("/login", async (req, res) => {
 
     if (data.length === 1) {
       const user = data[0];
-      // const isPasswordValid = await bcrypt.compare(password, user.password);
-      const isPasswordValid = password === user.password;
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      // const isPasswordValid = password === user.password;
       if (isPasswordValid) {
         const userData = {
           isSuccess: "success",
