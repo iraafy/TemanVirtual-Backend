@@ -11,6 +11,7 @@ const saltRounds = 10;
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
+import argon2 from "argon2";
 
 app.use(bodyParser.json());
 
@@ -63,7 +64,8 @@ app.post("/register", async (req, res) => {
       return response(200, userData, "Email sudah terdaftar", res);
     } else {
       try {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        // const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await argon2.hash(password);
         const { data: newUser, error: newUserError } = await supabase
           .from("users")
           .insert({ name, email, password: hashedPassword, friend, profile })
@@ -103,7 +105,8 @@ app.post("/login", async (req, res) => {
 
     if (data.length === 1) {
       const user = data[0];
-      const isPasswordValid = await bcrypt.compare(password, user.password);
+      const isPasswordValid = await argon2.verify(user.password, password);
+      // const isPasswordValid = await bcrypt.compare(password, user.password);
       if (isPasswordValid) {
         const userData = {
           isSuccess: "success",
