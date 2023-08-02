@@ -262,6 +262,31 @@ app.post("/journal", async (req, res) => {
   }
 });
 
+app.put("/users", async (req, res) => {
+  const { id, name, email, password, friend, profile } = req.body;
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .update({ name, email, password, friend, profile })
+      .eq("id", id)
+      .select();
+    if (error) {
+      return response(500, null, "Internal Server Error", res);
+    }
+
+    if (data.length === 1) {
+      const userData = {
+        isSuccess: "success",
+        message: "Data berhasil diupdate",
+      };
+      return response(200, userData, "Update user successfully", res);
+    }
+  } catch (error) {
+    console.error(error);
+    return response(500, null, "Internal Server Error", res);
+  }
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
