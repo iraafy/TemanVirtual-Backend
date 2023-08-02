@@ -6,7 +6,7 @@ const db = require("./connection");
 const response = require("./response");
 require("dotenv").config();
 const { createClient } = require("@supabase/supabase-js");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const saltRounds = 10;
 
 const supabaseUrl = process.env.SUPABASE_URL;
