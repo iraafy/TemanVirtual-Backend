@@ -6,6 +6,8 @@ const db = require("./connection");
 const response = require("./response");
 require("dotenv").config();
 const { createClient } = require("@supabase/supabase-js");
+// const bcrypt = require("bcrypt");
+// const saltRounds = 10;
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
@@ -46,26 +48,46 @@ app.get("/article", async (req, res) => {
 app.post("/register", async (req, res) => {
   const { name, email, password, friend, profile } = req.body;
   try {
-    const { data, error } = await supabase
+    const { data: checkEmail, error: checkEmailError } = await supabase
       .from("users")
-      .insert([{ name, email, password, friend, profile }])
-      .select();
-    if (error) {
+      .select("*")
+      .eq("email", email);
+
+    if (checkEmailError) {
+      console.error("Supabase Check Email Error:", checkEmailError);
       return response(500, null, "Internal Server Error", res);
     }
 
-    if (data.length === 1) {
-      const user = data[0];
+    if (checkEmail && checkEmail.length > 0) {
       const userData = {
-        isSuccess: "success",
-        id: user.id,
+        isSuccess: "error",
+        message: "Email sudah terdaftar",
       };
-      return response(200, userData, "Register successfully", res);
+      return response(200, userData, "Email sudah terdaftar", res);
     } else {
-      return response(404, null, "User not found", res);
+      try {
+        // const hashedPassword = await bcrypt.hash(password, 10);
+        const { data: newUser, error: newUserError } = await supabase
+          .from("users")
+          .insert({ name, email, password, friend, profile })
+          .select("*")
+          .eq("email", email);
+
+        if (newUserError) {
+          return response(500, null, "Internal Server Error", res);
+        }
+        const responseUser = {
+          isSuccess: "success",
+          id: newUser[0].id,
+          messege: "Data berhasil ditambahkan",
+        };
+        return response(200, responseUser, "Data berhasil ditambahkan", res);
+      } catch (error) {
+        return response(500, null, "Internal Server Error", res);
+      }
     }
   } catch (error) {
-    console.error(error);
+    console.error("Supabase Check Email Error:", error);
     return response(500, null, "Internal Server Error", res);
   }
 });
@@ -84,12 +106,12 @@ app.post("/login", async (req, res) => {
 
     if (data.length === 1) {
       const user = data[0];
-      const isPasswordValid = user.password === password;
+      // const isPasswordValid = await bcrypt.compare(password, user.password);
+      const isPasswordValid = password === user.password;
       if (isPasswordValid) {
         const userData = {
+          isSuccess: "success",
           id: user.id,
-          name: user.name,
-          email: user.email,
         };
         return response(200, userData, "Login successfully", res);
       } else {
