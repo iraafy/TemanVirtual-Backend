@@ -111,12 +111,12 @@ app.post("/login", async (req, res) => {
           isSuccess: "success",
           id: user.id,
         };
-        return response(200, userData, "Login successfully", res);
+        return response(200, userData, "Berhasil login", res);
       } else {
-        return response(401, null, "Invalid email/password", res);
+        return response(401, null, "Email dan password tidak sesuai", res);
       }
     } else {
-      return response(404, null, "User not found", res);
+      return response(404, null, "Pengguna tidak ditemukan", res);
     }
   } catch (error) {
     console.error(error);
@@ -140,7 +140,7 @@ app.get("/users/:id", async (req, res) => {
       const userData = data[0];
       return response(200, userData, "Get detail artikel", res);
     } else {
-      return response(404, null, "Artikel not found", res);
+      return response(404, null, "Artikel tidak ditemukan", res);
     }
   } catch (error) {
     console.error(error);
@@ -164,7 +164,7 @@ app.get("/article/:id", async (req, res) => {
       const artikelData = data[0];
       return response(200, artikelData, "Get detail artikel", res);
     } else {
-      return response(404, null, "Artikel not found", res);
+      return response(404, null, "Artikel tidak ditemukan", res);
     }
   } catch (error) {
     console.error(error);
@@ -247,7 +247,7 @@ app.post("/moods", async (req, res) => {
       };
       return response(200, moodsData, "Data berhasil ditambahkan", res);
     } else {
-      return response(404, null, "Moods not found", res);
+      return response(404, null, "Moods tidak ditemukan", res);
     }
   } catch (error) {
     console.error(error);
@@ -274,7 +274,7 @@ app.post("/journal", async (req, res) => {
       };
       return response(200, journalData, "Data berhasil ditambahkan", res);
     } else {
-      return response(404, null, "Journal not found", res);
+      return response(404, null, "Journal tidak ditemukan", res);
     }
   } catch (error) {
     console.error(error);
