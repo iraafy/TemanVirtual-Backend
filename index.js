@@ -20,6 +20,17 @@ app.get("/", (req, res) => {
 });
 
 app.get("/users", async (req, res) => {
+  const userAgent = req.get("User-Agent");
+  const isWebBrowser = /Mozilla|Chrome|Safari|Opera|Edge/.test(userAgent);
+
+  if (isWebBrowser) {
+    return response(
+      403,
+      null,
+      "Access to this API is restricted from web browsers.",
+      res
+    );
+  }
   const { data, error } = await supabase.from("users").select("*");
   if (error) {
     return response(500, null, error.message, res);
@@ -28,6 +39,17 @@ app.get("/users", async (req, res) => {
 });
 
 app.get("/quotes", async (req, res) => {
+  const userAgent = req.get("User-Agent");
+  const isWebBrowser = /Mozilla|Chrome|Safari|Opera|Edge/.test(userAgent);
+
+  if (isWebBrowser) {
+    return response(
+      403,
+      null,
+      "Access to this API is restricted from web browsers.",
+      res
+    );
+  }
   const { data, error } = await supabase.from("quotes").select("*");
   if (error) {
     return response(500, null, error.message, res);
@@ -36,6 +58,17 @@ app.get("/quotes", async (req, res) => {
 });
 
 app.get("/article", async (req, res) => {
+  const userAgent = req.get("User-Agent");
+  const isWebBrowser = /Mozilla|Chrome|Safari|Opera|Edge/.test(userAgent);
+
+  if (isWebBrowser) {
+    return response(
+      403,
+      null,
+      "Access to this API is restricted from web browsers.",
+      res
+    );
+  }
   const { data, error } = await supabase.from("article").select("*");
   if (error) {
     return response(500, null, error.message, res);
@@ -125,6 +158,17 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/users/:id", async (req, res) => {
+  const userAgent = req.get("User-Agent");
+  const isWebBrowser = /Mozilla|Chrome|Safari|Opera|Edge/.test(userAgent);
+
+  if (isWebBrowser) {
+    return response(
+      403,
+      null,
+      "Access to this API is restricted from web browsers.",
+      res
+    );
+  }
   const id = req.params.id;
   try {
     const { data, error } = await supabase
@@ -149,6 +193,17 @@ app.get("/users/:id", async (req, res) => {
 });
 
 app.get("/article/:id", async (req, res) => {
+  const userAgent = req.get("User-Agent");
+  const isWebBrowser = /Mozilla|Chrome|Safari|Opera|Edge/.test(userAgent);
+
+  if (isWebBrowser) {
+    return response(
+      403,
+      null,
+      "Access to this API is restricted from web browsers.",
+      res
+    );
+  }
   const id = req.params.id;
   try {
     const { data, error } = await supabase
@@ -173,6 +228,17 @@ app.get("/article/:id", async (req, res) => {
 });
 
 app.get("/moods/:user_id", async (req, res) => {
+  const userAgent = req.get("User-Agent");
+  const isWebBrowser = /Mozilla|Chrome|Safari|Opera|Edge/.test(userAgent);
+
+  if (isWebBrowser) {
+    return response(
+      403,
+      null,
+      "Access to this API is restricted from web browsers.",
+      res
+    );
+  }
   const user_id = req.params.user_id;
   try {
     const { data, error } = await supabase
@@ -201,6 +267,17 @@ app.get("/moods/:user_id", async (req, res) => {
 });
 
 app.get("/journal/:user_id", async (req, res) => {
+  const userAgent = req.get("User-Agent");
+  const isWebBrowser = /Mozilla|Chrome|Safari|Opera|Edge/.test(userAgent);
+
+  if (isWebBrowser) {
+    return response(
+      403,
+      null,
+      "Access to this API is restricted from web browsers.",
+      res
+    );
+  }
   const user_id = req.params.user_id;
   try {
     const { data, error } = await supabase
@@ -328,6 +405,58 @@ app.put("/users", async (req, res) => {
     return response(500, null, "Internal Server Error", res);
   }
 });
+
+app.put("/journal/:id", async (req, res) => {
+  const journalId = req.params.id;
+  const { title, content } = req.body;
+  
+  try {
+    const { data, error } = await supabase
+      .from("journal")
+      .update({ title, content })
+      .eq("id", journalId)
+      .select();
+      
+    if (error) {
+      return response(500, null, "Internal Server Error", res);
+    }
+
+    if (data.length === 1) {
+      const journalData = {
+        isSuccess: "success",
+        message: "Jurnal berhasil diupdate",
+      };
+      return response(200, journalData, "Jurnal berhasil diupdate", res);
+    }
+  } catch (error) {
+    console.error("Supabase Update Journal Error:", error);
+    return response(500, null, "Internal Server Error", res);
+  }
+});
+
+app.delete("/journal/:id", async (req, res) => {
+  const journalId = req.params.id;
+
+  try {
+    const { data, error } = await supabase
+      .from("journal")
+      .delete()
+      .eq("id", journalId);
+    if (error) {
+      console.error("Supabase Delete Error:", error);
+      return response(500, null, "Internal Server Error", res);
+    }
+    const responseData = {
+      isSuccess: "success",
+      message: "Jurnal berhasil dihapus",
+    };
+      return response(200, responseData, "Jurnal berhasil dihapus", res);
+  } catch (error) {
+    console.error("Supabase Delete Error:", error);
+    return response(500, null, "Internal Server Error", res);
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
